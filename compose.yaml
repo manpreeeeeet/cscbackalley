@@ -1,0 +1,10 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - frontend_csc:/app/frontend
+
+volumes:
+  frontend_csc:
