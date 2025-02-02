@@ -1,5 +1,4 @@
 import { Navbar } from "./Navbar.tsx";
-import { Login } from "./Login.tsx";
 
 export function BaseLayout({ children }) {
   return (

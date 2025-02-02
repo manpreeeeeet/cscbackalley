@@ -1,14 +1,21 @@
-import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { login } from "../api.ts";
-import { useNavigate } from "react-router";
+import { useContext, useEffect, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  getLoginStatus,
+  getPosts,
+  login as loginRequest,
+  signup,
+} from "../api.ts";
+import { LoginContext } from "../LoginContextProvider.tsx";
 
 export function Login() {
+  const queryClient = useQueryClient();
   const [isOverlayVisible, setOverlayVisible] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [inviteCode, setInviteCode] = useState("");
   const [isLoginMode, setIsLoginMode] = useState(true);
-  const navigate = useNavigate();
+  const { isLoggedIn, login, logout } = useContext(LoginContext);
 
   const handleSignInClick = () => {
     setOverlayVisible(true);
@@ -18,25 +25,66 @@ export function Login() {
     setOverlayVisible(false);
   };
 
-  const mutation = useMutation({
-    mutationFn: login,
+  const { isPending, isError, data, error, isSuccess } = useQuery({
+    queryKey: ["author", "status"],
+    queryFn: async () => {
+      return await getLoginStatus();
+    },
+  });
+
+  useEffect(() => {
+    if (isSuccess) {
+      login();
+    } else {
+      logout();
+    }
+  }, [isSuccess]);
+
+  const loginMutation = useMutation({
+    mutationFn: loginRequest,
     onSuccess: async () => {
       setUsername("");
       setPassword("");
       setOverlayVisible(false);
+      await queryClient.invalidateQueries({
+        queryKey: ["author", "status"],
+      });
     },
     onError: (error) => {
       console.log(error);
     },
   });
 
+  const signUpMutation = useMutation({
+    mutationFn: signup,
+    onSuccess: async () => {
+      setUsername("");
+      setPassword("");
+      setOverlayVisible(false);
+      await queryClient.invalidateQueries({
+        queryKey: ["author", "status"],
+      });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
+  const signUpButtonClick = () => {
+    signUpMutation.mutate({ name: username, password, code: inviteCode });
+  };
+
   const loginButtonClick = () => {
-    mutation.mutate({ name: username, password });
+    loginMutation.mutate({ name: username, password });
   };
 
   return (
     <div>
-      <button onClick={handleSignInClick}>[join]</button>
+      {isSuccess ? (
+        <div>{data?.name}</div>
+      ) : (
+        <button onClick={handleSignInClick}>[join]</button>
+      )}
       {isOverlayVisible && (
         <div
           className="fixed bg-[#0000004d] top-0 left-0 inset-0 z-40 flex items-center justify-center bg-opacity-50"
@@ -61,20 +109,35 @@ export function Login() {
                   className="w-full border border-white p-1"
                   type="text"
                   placeholder="username"
+                  value={username}
                   onInput={(e) => setUsername(e.target.value)}
                 />
                 <input
                   className="w-full border border-white p-1"
-                  type="text"
+                  type="password"
                   placeholder="password"
+                  value={password}
                   onInput={(e) => setPassword(e.target.value)}
                 />
+                {!isLoginMode && (
+                  <input
+                    className="w-full border border-white p-1"
+                    type="text"
+                    placeholder="invite code"
+                    value={inviteCode}
+                    onInput={(e) => setInviteCode(e.target.value)}
+                  />
+                )}
                 <div className="cursor-pointer">
                   {isLoginMode && (
-                    <div onClick={() => setIsLoginMode(false)}>sign up</div>
+                    <div onClick={() => setIsLoginMode(false)}>
+                      new here? sign up
+                    </div>
                   )}
                   {!isLoginMode && (
-                    <div onClick={() => setIsLoginMode(true)}>login</div>
+                    <div onClick={() => setIsLoginMode(true)}>
+                      have an account? login
+                    </div>
                   )}
                 </div>
                 <div className="mt-20">
@@ -87,7 +150,10 @@ export function Login() {
                     </button>
                   )}
                   {!isLoginMode && (
-                    <button className="border border-white py-1 px-4">
+                    <button
+                      className="border border-white py-1 px-4"
+                      onClick={signUpButtonClick}
+                    >
                       sign up
                     </button>
                   )}

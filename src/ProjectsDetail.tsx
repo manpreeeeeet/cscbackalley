@@ -1,47 +1,47 @@
 import { BaseLayout } from "./components/BaseLayout.tsx";
 import { TypewriterEffect } from "./components/Typewriter.tsx";
-import { CreatePost } from "./components/CreatePost.tsx";
 import { useQuery } from "@tanstack/react-query";
-import { getPosts } from "./api.ts";
-import { useNavigate } from "react-router";
+import { getPost } from "./api.ts";
+import { useParams } from "react-router";
+import { CreateReply } from "./components/CreateReply.tsx";
 import { format } from "date-fns";
 
-export function Projects() {
-  const { isPending, isError, data, error } = useQuery({
-    queryKey: ["posts", "projects"],
+export function ProjectsDetail() {
+  const { pid } = useParams();
+
+  const {
+    isPending,
+    isError,
+    data: post,
+    error,
+  } = useQuery({
+    queryKey: ["posts", "projects", pid],
     queryFn: async () => {
-      return await getPosts("projects");
+      return await getPost({ room: "projects", id: pid!! });
     },
   });
-
-  const navigate = useNavigate();
 
   return (
     <BaseLayout>
       <div className="flex flex-col items-center">
         <div className="mx-auto">projects /</div>
         <TypewriterEffect texts={["i made a thing"]} />
-        <CreatePost room={"projects"} />
-        <div className="text-base w-full mt-2 flex flex-col gap-2">
-          {data &&
-            data.map((post) => {
-              return (
-                <div
-                  className="border-b border-white w-full cursor-pointer pb-1"
-                  onClick={() => navigate(`/projects/${post.id}/`)}
-                >
-                  <div className="flex flex-col gap-2">
-                    <div className="text-xs md:text-sm flex gap-2">
-                      <div className="underline">{post.author.name}</div>
-                      <div className="text-gray-400">
-                        {format(new Date(post.createdAt), "MMM dd, yyyy HH:mm")}
-                      </div>
+        <div className="text-base w-full mt-2">
+          <div className="border-b border-white w-full">
+            <div className="flex flex-col gap-2">
+              {isPending && <div>loading....</div>}
+              {!isPending && post && (
+                <>
+                  <div className="text-xs md:text-sm flex gap-2">
+                    <div className="underline">{post.author.name}</div>
+                    <div className="text-gray-400">
+                      {format(new Date(post.createdAt), "MMM dd, yyyy HH:mm")}
                     </div>
-                    <div className="flex flex-col">
-                      {post.text.split("\n").map((line) => (
-                        <div>{line}</div>
-                      ))}
-                    </div>
+                  </div>
+                  <div className="flex flex-col">
+                    {post.text.split("\n").map((line) => (
+                      <div>{line}</div>
+                    ))}
                   </div>
                   <div className="flex flex-col gap-2">
                     {post.replies.map((reply) => {
@@ -65,9 +65,11 @@ export function Projects() {
                       );
                     })}
                   </div>
-                </div>
-              );
-            })}
+                  <CreateReply room={"projects"} postId={pid!!} />
+                </>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </BaseLayout>
