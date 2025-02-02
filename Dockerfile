@@ -5,7 +5,7 @@ WORKDIR /app/frontend
 COPY package*.json ./
 RUN npm install
 
-COPY client/ ./
+COPY . ./
 RUN npm run build
 
 FROM alpine:latest
