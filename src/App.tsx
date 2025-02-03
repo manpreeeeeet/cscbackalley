@@ -46,7 +46,7 @@ function App() {
     }, 4000);
 
     return () => clearTimeout(timeout);
-  }, [currentIndex]);
+  }, [currentIndex, combined]);
 
   return (
     <BaseLayout>
