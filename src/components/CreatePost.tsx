@@ -11,7 +11,7 @@ export function CreatePost({ room }: { room: string }) {
     mutationFn: createPost,
     onSuccess: () => {
       setPostText("");
-      queryClient.invalidateQueries({ queryKey: ["posts", "projects"] });
+      queryClient.invalidateQueries({ queryKey: ["posts", room] });
     },
     onError: (error) => {
       console.log(error);

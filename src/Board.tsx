@@ -3,14 +3,15 @@ import { TypewriterEffect } from "./components/Typewriter.tsx";
 import { CreatePost } from "./components/CreatePost.tsx";
 import { useQuery } from "@tanstack/react-query";
 import { getPosts } from "./api.ts";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { format } from "date-fns";
 
-export function Projects() {
+export function Board() {
+  const { room } = useParams();
   const { isPending, isError, data, error } = useQuery({
-    queryKey: ["posts", "projects"],
+    queryKey: ["posts", room],
     queryFn: async () => {
-      return await getPosts("projects");
+      return await getPosts(room);
     },
   });
 
@@ -19,16 +20,16 @@ export function Projects() {
   return (
     <BaseLayout>
       <div className="flex flex-col items-center">
-        <div className="mx-auto">projects /</div>
+        <div className="mx-auto">{room} /</div>
         <TypewriterEffect texts={["i made a thing"]} />
-        <CreatePost room={"projects"} />
+        <CreatePost room={room!!} />
         <div className="text-base w-full mt-2 flex flex-col gap-2">
           {data &&
             data.map((post) => {
               return (
                 <div
                   className="border-b border-white w-full cursor-pointer pb-1"
-                  onClick={() => navigate(`/projects/${post.id}/`)}
+                  onClick={() => navigate(`/${room}/${post.id}/`)}
                 >
                   <div className="flex flex-col gap-2">
                     <div className="text-xs md:text-sm flex gap-2">

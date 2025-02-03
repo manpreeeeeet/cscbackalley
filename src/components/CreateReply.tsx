@@ -18,7 +18,7 @@ export function CreateReply({
     onSuccess: () => {
       setReplyText("");
       queryClient.invalidateQueries({
-        queryKey: ["posts", "projects", postId],
+        queryKey: ["posts", room, postId],
       });
     },
     onError: (error) => {

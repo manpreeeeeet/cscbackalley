@@ -6,7 +6,8 @@ import { useParams } from "react-router";
 import { CreateReply } from "./components/CreateReply.tsx";
 import { format } from "date-fns";
 
-export function ProjectsDetail() {
+export function BoardDetail() {
+  const { room } = useParams();
   const { pid } = useParams();
 
   const {
@@ -15,16 +16,16 @@ export function ProjectsDetail() {
     data: post,
     error,
   } = useQuery({
-    queryKey: ["posts", "projects", pid],
+    queryKey: ["posts", room, pid],
     queryFn: async () => {
-      return await getPost({ room: "projects", id: pid!! });
+      return await getPost({ room, id: pid!! });
     },
   });
 
   return (
     <BaseLayout>
       <div className="flex flex-col items-center">
-        <div className="mx-auto">projects /</div>
+        <div className="mx-auto">{room} /</div>
         <TypewriterEffect texts={["i made a thing"]} />
         <div className="text-base w-full mt-2">
           <div className="border-b border-white w-full">

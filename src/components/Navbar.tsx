@@ -10,7 +10,7 @@ export function Navbar() {
         <div className="flex mx-2 gap-1">
           [<a href="/rumors">r |</a>
           <a href="/projects">p |</a>
-          <a href="/rumors">g </a>]
+          <a href="/gifs">g </a>]
         </div>
       </div>
       <div className="mx-2">
