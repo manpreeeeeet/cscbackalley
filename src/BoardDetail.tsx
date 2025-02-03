@@ -5,6 +5,7 @@ import { getPost } from "./api.ts";
 import { useParams } from "react-router";
 import { CreateReply } from "./components/CreateReply.tsx";
 import { format } from "date-fns";
+import { messages } from "./Board.tsx";
 
 export function BoardDetail() {
   const { room } = useParams();
@@ -26,7 +27,7 @@ export function BoardDetail() {
     <BaseLayout>
       <div className="flex flex-col items-center">
         <div className="mx-auto">{room} /</div>
-        <TypewriterEffect texts={["i made a thing"]} />
+        <TypewriterEffect texts={messages[room]} />
         <div className="text-base w-full mt-2">
           <div className="border-b border-white w-full">
             <div className="flex flex-col gap-2">

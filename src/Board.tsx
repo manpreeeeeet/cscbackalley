@@ -6,7 +6,7 @@ import { getPosts } from "./api.ts";
 import { useNavigate, useParams } from "react-router";
 import { format } from "date-fns";
 
-const messages = {
+export const messages = {
   projects: ["i made a thing"],
   rumors: ["source? i made it up"],
   gifs: ["really bad graphic format"],
