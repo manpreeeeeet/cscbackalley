@@ -6,6 +6,12 @@ import { getPosts } from "./api.ts";
 import { useNavigate, useParams } from "react-router";
 import { format } from "date-fns";
 
+const messages = {
+  projects: ["i made a thing"],
+  rumors: ["source? i made it up"],
+  gifs: ["really bad graphic format"],
+};
+
 export function Board() {
   const { room } = useParams();
   const { isPending, isError, data, error } = useQuery({
@@ -21,14 +27,14 @@ export function Board() {
     <BaseLayout>
       <div className="flex flex-col items-center">
         <div className="mx-auto">{room} /</div>
-        <TypewriterEffect texts={["i made a thing"]} />
+        <TypewriterEffect texts={messages[room]} />
         <CreatePost room={room!!} />
-        <div className="text-base w-full mt-2 flex flex-col gap-2">
+        <div className="text-base w-full mt-2 flex flex-col gap-6">
           {data &&
             data.map((post) => {
               return (
                 <div
-                  className="border-b border-white w-full cursor-pointer pb-1"
+                  className="border-l-2 hover:border-l-4 p-1 border-gray-400 w-full cursor-pointer pb-1"
                   onClick={() => navigate(`/${room}/${post.id}/`)}
                 >
                   <div className="flex flex-col gap-2">
