@@ -66,7 +66,7 @@ interface Posts {
   posts: Post[];
 }
 
-interface Post {
+export interface Post {
   id: number;
   room: string;
   text: string;
@@ -83,7 +83,25 @@ interface GetPost {
   room: string;
 }
 
-export const getLatestPost = async (): Promise<Post> => {
+export interface Reply {
+  id: number;
+  text: string;
+  imageUrl: string | null;
+  createdAt: string;
+  author: {
+    name: string;
+  };
+  parent: {
+    id: number;
+    room: string;
+  };
+}
+interface LatestPosts {
+  posts: Post[];
+  replies: Reply[];
+}
+
+export const getLatestPost = async (): Promise<LatestPosts> => {
   const response = await fetch(`${API_BASE_URL}/posts/latest/`, {
     method: "GET",
     credentials: "include",
@@ -98,7 +116,30 @@ export const getLatestPost = async (): Promise<Post> => {
 
 export const getPost = async (post: GetPost): Promise<Post> => {
   const response = await fetch(
-    `${API_BASE_URL}/posts/${post.room}/${post.id}/`,
+    `${API_BASE_URL}/posts/${post.room}/${post.id}`,
+    {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+
+  const data = await response.json();
+  return data;
+};
+interface PostsPaginated {
+  posts: Post[];
+  cursor: number | null;
+}
+
+export const getPostsPaginated = async (
+  room: string,
+  page: number,
+): Promise<PostsPaginated> => {
+  const response = await fetch(
+    `${API_BASE_URL}/posts/${room}/?cursor=${page}`,
     {
       method: "GET",
       credentials: "include",

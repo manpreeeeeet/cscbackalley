@@ -1,11 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  getLoginStatus,
-  getPosts,
-  login as loginRequest,
-  signup,
-} from "../api.ts";
+import { getLoginStatus, login as loginRequest, signup } from "../api.ts";
 import { LoginContext } from "../LoginContextProvider.tsx";
 
 export function Login() {
