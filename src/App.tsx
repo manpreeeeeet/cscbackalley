@@ -53,12 +53,12 @@ function App() {
                     <img
                       src={post.imageUrl}
                       alt=""
-                      className="h-32 max-w-[30%] object-contain"
+                      className="w-48 max-h-64 object-contain"
                     />
                   )}
                   <div className="flex flex-col break-all">
-                    {post.text.split("\n").map((line) => (
-                      <div>{line}</div>
+                    {post.text.split("\n").map((line, index) => (
+                      <div key={index}>{line}</div>
                     ))}
                   </div>
                 </div>

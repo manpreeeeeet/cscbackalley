@@ -30,7 +30,9 @@ export function BoardDetail() {
         <div className="text-base w-full mt-2">
           <div className="border-b border-white w-full">
             <div className="flex flex-col gap-2">
-              {isPending && <div>loading....</div>}
+              {isPending && (
+                <div className="text-xs md:text-sm flex gap-2">loading....</div>
+              )}
               {!isPending && post && (
                 <>
                   <div className="text-xs md:text-sm flex gap-2">
@@ -39,15 +41,27 @@ export function BoardDetail() {
                       {format(new Date(post.createdAt), "MMM dd, yyyy HH:mm")}
                     </div>
                   </div>
-                  <div className="flex flex-col break-all">
-                    {post.text.split("\n").map((line) => (
-                      <div>{line}</div>
-                    ))}
+                  <div className="flex">
+                    {post.imageUrl && (
+                      <img
+                        src={post.imageUrl}
+                        alt=""
+                        className="h-32 max-w-[30%] object-contain"
+                      />
+                    )}
+                    <div className="flex flex-col break-all">
+                      {post.text.split("\n").map((line, index) => (
+                        <div key={index}>{line}</div>
+                      ))}
+                    </div>
                   </div>
                   <div className="flex flex-col gap-2">
                     {post.replies.map((reply) => {
                       return (
-                        <div className="flex flex-col gap-2 border border-white w-fit p-1">
+                        <div
+                          key={reply.id}
+                          className="flex flex-col gap-2 border border-white w-fit p-1"
+                        >
                           <div className="text-xs md:text-sm flex gap-2">
                             <div className="underline">{reply.author.name}</div>
                             <div className="text-gray-400">
@@ -57,10 +71,19 @@ export function BoardDetail() {
                               )}
                             </div>
                           </div>
-                          <div className="flex flex-col break-all">
-                            {reply.text.split("\n").map((line) => (
-                              <div>{line}</div>
-                            ))}
+                          <div className="flex gap-2 p-1">
+                            {reply.imageUrl && (
+                              <img
+                                src={reply.imageUrl}
+                                alt=""
+                                className="w-48 max-h-64 object-contain"
+                              />
+                            )}
+                            <div className="flex flex-col break-all">
+                              {reply.text.split("\n").map((line, index) => (
+                                <div key={index}>{line}</div>
+                              ))}
+                            </div>
                           </div>
                         </div>
                       );

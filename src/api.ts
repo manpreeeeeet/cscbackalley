@@ -143,6 +143,7 @@ interface ReplyRequest {
   postId: string;
   text: string;
   room: string;
+  url: string | null;
 }
 
 export const createReply = async (reply: ReplyRequest) => {

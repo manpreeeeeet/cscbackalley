@@ -11,7 +11,7 @@ export function Navbar() {
         <div className="flex mx-2 gap-1">
           [<Link to="/rumors">r |</Link>
           <Link to="/projects">p |</Link>
-          <Link to="/gifs">g </Link>]
+          <Link to="/spam">s</Link>]
         </div>
       </div>
       <div className="mx-2">

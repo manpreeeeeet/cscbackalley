@@ -43,7 +43,7 @@ const UploadImage = ({ setImageUrl }) => {
 
     try {
       const response = await fetch(
-        `${API_BASE_URL}image/upload?filename=${encodeURIComponent(file.name)}&contentType=${file.type}&fileSize=${file.size}`,
+        `${API_BASE_URL}/image/upload?filename=${encodeURIComponent(file.name)}&contentType=${file.type}&fileSize=${file.size}`,
         { credentials: "include" },
       );
       if (!response.ok) throw new Error("Failed to get presigned URL");
@@ -64,6 +64,7 @@ const UploadImage = ({ setImageUrl }) => {
         fileInputRef.current.value = "";
       }
     } catch (error) {
+      console.log(error);
       setMessage("upload failed");
     } finally {
       setUploading(false);
