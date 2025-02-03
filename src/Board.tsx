@@ -1,7 +1,7 @@
 import { BaseLayout } from "./components/BaseLayout.tsx";
 import { TypewriterEffect } from "./components/Typewriter.tsx";
 import { CreatePost } from "./components/CreatePost.tsx";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getPosts } from "./api.ts";
 import { useNavigate, useParams } from "react-router";
 import { format } from "date-fns";
@@ -15,12 +15,18 @@ export const messages = {
 
 export function Board() {
   const { room } = useParams();
+  const queryClient = useQueryClient();
   const { isPending, isError, data, error } = useQuery({
     queryKey: ["posts", room],
     queryFn: async () => {
       return await getPosts(room);
     },
+    staleTime: 1000 * 60 * 5,
   });
+
+  const invalidatePosts = () => {
+    queryClient.invalidateQueries(["posts", room]);
+  };
 
   const navigate = useNavigate();
 
@@ -30,6 +36,14 @@ export function Board() {
         <div className="mx-auto">{room} /</div>
         <TypewriterEffect texts={messages[room]} />
         <CreatePost room={room!!} />
+        <div className="w-full flex">
+          <div
+            className="text-base border border-white p-1 mt-2 cursor-pointer"
+            onClick={invalidatePosts}
+          >
+            refresh posts
+          </div>
+        </div>
         <div className="text-base w-full mt-2 flex flex-col gap-6">
           {data &&
             data.map((post) => {
