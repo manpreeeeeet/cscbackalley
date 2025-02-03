@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ./frontend/dist:/app/frontend
+      - frontend_csc:/app/frontend
 
   nginx:
     image: nginx:alpine
@@ -13,7 +13,10 @@ services:
       - frontend_csc_app
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./frontend/dist:/usr/share/nginx/html:ro  # Serve React build files
+      - frontend_csc:/usr/share/nginx/html:ro  # Serve React build files
     ports:
       - "8888:80"  # Nginx serves frontend
     restart: unless-stopped
+
+volumes:
+  frontend_csc:
