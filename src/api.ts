@@ -67,6 +67,7 @@ interface Posts {
 
 interface Post {
   id: number;
+  room: string;
   text: string;
   createdAt: string;
   author: {
@@ -79,6 +80,19 @@ interface GetPost {
   id: string;
   room: string;
 }
+
+export const getLatestPost = async (): Promise<Post> => {
+  const response = await fetch(`${API_BASE_URL}/posts/latest/`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  const data = await response.json();
+  return data;
+};
 
 export const getPost = async (post: GetPost): Promise<Post> => {
   const response = await fetch(
