@@ -116,7 +116,7 @@ export const getLatestPost = async (): Promise<LatestPosts> => {
 
 export const getPost = async (post: GetPost): Promise<Post> => {
   const response = await fetch(
-    `${API_BASE_URL}/posts/${post.room}/${post.id}`,
+    `${API_BASE_URL}/posts/${post.room}/${post.id}/`,
     {
       method: "GET",
       credentials: "include",
