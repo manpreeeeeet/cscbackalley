@@ -38,7 +38,7 @@ export function ProjectsDetail() {
                       {format(new Date(post.createdAt), "MMM dd, yyyy HH:mm")}
                     </div>
                   </div>
-                  <div className="flex flex-col">
+                  <div className="flex flex-col break-all">
                     {post.text.split("\n").map((line) => (
                       <div>{line}</div>
                     ))}
@@ -56,7 +56,7 @@ export function ProjectsDetail() {
                               )}
                             </div>
                           </div>
-                          <div className="flex flex-col">
+                          <div className="flex flex-col break-all">
                             {reply.text.split("\n").map((line) => (
                               <div>{line}</div>
                             ))}
