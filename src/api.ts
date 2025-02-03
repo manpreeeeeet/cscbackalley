@@ -59,6 +59,7 @@ export const signup = async (credentials: SignUpCredentials) => {
 interface PostRequest {
   text: string;
   room: string;
+  url: string | null;
 }
 
 interface Posts {
@@ -69,6 +70,7 @@ interface Post {
   id: number;
   room: string;
   text: string;
+  imageUrl: string | null;
   createdAt: string;
   author: {
     name: string;

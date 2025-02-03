@@ -44,10 +44,19 @@ export function Board() {
                         {format(new Date(post.createdAt), "MMM dd, yyyy HH:mm")}
                       </div>
                     </div>
-                    <div className="flex flex-col break-all">
-                      {post.text.split("\n").map((line) => (
-                        <div>{line}</div>
-                      ))}
+                    <div className="flex">
+                      {post.imageUrl && (
+                        <img
+                          src={post.imageUrl}
+                          alt=""
+                          className="h-32 max-w-[30%] object-contain"
+                        />
+                      )}
+                      <div className="flex flex-col break-all">
+                        {post.text.split("\n").map((line) => (
+                          <div>{line}</div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                   <div className="flex flex-col gap-2">
