@@ -5,6 +5,7 @@ import { TypewriterEffect } from "./components/Typewriter.tsx";
 import { format } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import { getLatestPost, getPost } from "./api.ts";
+import { Link } from "react-router";
 
 function App() {
   const {
@@ -37,7 +38,7 @@ function App() {
               <div className="mt-10 flex items-end justify-between">
                 <div className="text-2xl">Latest Post</div>
                 <div className="text-base underline cursor-pointer">
-                  <a href={`/${post.room}/${post.id}/`}>view thread</a>
+                  <Link to={`/${post.room}/${post.id}/`}>view thread</Link>
                 </div>
               </div>
               <div className="text-base border border-white w-full min-h-30 p-1">
