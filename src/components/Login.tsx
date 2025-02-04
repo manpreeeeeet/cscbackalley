@@ -1,6 +1,11 @@
 import { useContext, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getLoginStatus, login as loginRequest, signup } from "../api.ts";
+import {
+  API_BASE_URL,
+  getLoginStatus,
+  login as loginRequest,
+  signup,
+} from "../api.ts";
 import { LoginContext } from "../LoginContextProvider.tsx";
 
 export function Login() {
@@ -9,7 +14,11 @@ export function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [inviteCode, setInviteCode] = useState("");
-  const [isLoginMode, setIsLoginMode] = useState(true);
+  const [inviteSuccess, setInviteSuccess] = useState<string | null>(null);
+  const [genCode, setGenCode] = useState("");
+  const [isLoginMode, setIsLoginMode] = useState<"login" | "signup" | "invite">(
+    "login",
+  );
   const { isLoggedIn, login, logout } = useContext(LoginContext);
 
   const handleSignInClick = () => {
@@ -30,17 +39,41 @@ export function Login() {
   useEffect(() => {
     if (isSuccess) {
       login();
+      setIsLoginMode("invite");
     } else {
       logout();
     }
   }, [isSuccess]);
+
+  const inviteMutation = useMutation({
+    mutationFn: async (): Promise<{ message: string }> => {
+      const response = await fetch(
+        `${API_BASE_URL}/author/invite?code=${genCode}`,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      const data = await response.json();
+      return data;
+    },
+    onSuccess: async (data) => {
+      setInviteSuccess(data.message);
+      setGenCode("");
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
 
   const loginMutation = useMutation({
     mutationFn: loginRequest,
     onSuccess: async () => {
       setUsername("");
       setPassword("");
-      setOverlayVisible(false);
       await queryClient.invalidateQueries({
         queryKey: ["author", "status"],
       });
@@ -73,10 +106,16 @@ export function Login() {
     loginMutation.mutate({ name: username, password });
   };
 
+  const validateInvite = () => {
+    inviteMutation.mutate();
+  };
+
   return (
     <div>
       {isSuccess ? (
-        <div>{data?.name}</div>
+        <div className="cursor-pointer" onClick={() => setOverlayVisible(true)}>
+          {data?.name}
+        </div>
       ) : (
         <button onClick={handleSignInClick}>[join]</button>
       )}
@@ -90,7 +129,11 @@ export function Login() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between p-1 border-b-2 border-white">
-              <div>identify yourself</div>
+              {isLoginMode !== "invite" ? (
+                <div>identify yourself</div>
+              ) : (
+                <div>welcome {data?.name}</div>
+              )}
               <button
                 onClick={handleCloseOverlay}
                 className="text-gray-500 hover:text-gray-700 focus:outline-none cursor-pointer"
@@ -99,61 +142,81 @@ export function Login() {
               </button>
             </div>
             <div className="p-20 flex flex-col flex-1">
-              <div className="my-auto flex flex-col gap-2 items-center">
-                <input
-                  className="w-full border border-white p-1"
-                  type="text"
-                  placeholder="username"
-                  value={username}
-                  onInput={(e) => setUsername(e.target.value)}
-                />
-                <input
-                  className="w-full border border-white p-1"
-                  type="password"
-                  placeholder="password"
-                  value={password}
-                  onInput={(e) => setPassword(e.target.value)}
-                />
-                {!isLoginMode && (
+              {isLoginMode === "invite" && (
+                <div className="my-auto flex flex-col gap-2 items-center">
                   <input
                     className="w-full border border-white p-1"
                     type="text"
                     placeholder="invite code"
-                    value={inviteCode}
-                    onInput={(e) => setInviteCode(e.target.value)}
+                    value={genCode}
+                    onInput={(e) => setGenCode(e.target.value)}
                   />
-                )}
-                <div className="cursor-pointer">
-                  {isLoginMode && (
-                    <div onClick={() => setIsLoginMode(false)}>
-                      new here? sign up
-                    </div>
-                  )}
-                  {!isLoginMode && (
-                    <div onClick={() => setIsLoginMode(true)}>
-                      have an account? login
-                    </div>
-                  )}
+                  {inviteSuccess !== null && <div>{inviteSuccess}</div>}
+                  <button
+                    className="border border-white py-1 px-4 cursor-pointer"
+                    onClick={validateInvite}
+                  >
+                    invite
+                  </button>
                 </div>
-                <div className="mt-20">
-                  {isLoginMode && (
-                    <button
-                      className="border border-white py-1 px-4"
-                      onClick={loginButtonClick}
-                    >
-                      login
-                    </button>
+              )}
+              {(isLoginMode === "login" || isLoginMode == "signup") && (
+                <div className="my-auto flex flex-col gap-2 items-center">
+                  <input
+                    className="w-full border border-white p-1"
+                    type="text"
+                    placeholder="username"
+                    value={username}
+                    onInput={(e) => setUsername(e.target.value)}
+                  />
+                  <input
+                    className="w-full border border-white p-1"
+                    type="password"
+                    placeholder="password"
+                    value={password}
+                    onInput={(e) => setPassword(e.target.value)}
+                  />
+                  {isLoginMode === "signup" && (
+                    <input
+                      className="w-full border border-white p-1"
+                      type="text"
+                      placeholder="invite code"
+                      value={inviteCode}
+                      onInput={(e) => setInviteCode(e.target.value)}
+                    />
                   )}
-                  {!isLoginMode && (
-                    <button
-                      className="border border-white py-1 px-4"
-                      onClick={signUpButtonClick}
-                    >
-                      sign up
-                    </button>
-                  )}
+                  <div className="cursor-pointer">
+                    {isLoginMode === "login" && (
+                      <div onClick={() => setIsLoginMode("signup")}>
+                        new here? sign up
+                      </div>
+                    )}
+                    {isLoginMode === "signup" && (
+                      <div onClick={() => setIsLoginMode("login")}>
+                        have an account? login
+                      </div>
+                    )}
+                  </div>
+                  <div className="mt-20">
+                    {isLoginMode === "login" && (
+                      <button
+                        className="border border-white py-1 px-4"
+                        onClick={loginButtonClick}
+                      >
+                        login
+                      </button>
+                    )}
+                    {isLoginMode === "signup" && (
+                      <button
+                        className="border border-white py-1 px-4"
+                        onClick={signUpButtonClick}
+                      >
+                        sign up
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
