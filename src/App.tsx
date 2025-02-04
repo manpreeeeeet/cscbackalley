@@ -28,6 +28,9 @@ function App() {
   useEffect(() => {
     if (latestPosts) {
       const newCombined = [...latestPosts.posts, ...latestPosts.replies];
+      newCombined.sort((post1, post2) => {
+        return new Date(post2.createdAt) - new Date(post1.createdAt);
+      });
       setCombined(newCombined);
       setCurrentPost(newCombined[currentIndex]);
     }
