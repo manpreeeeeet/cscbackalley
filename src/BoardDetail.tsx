@@ -41,6 +41,7 @@ export function BoardDetail() {
                     <div className="text-gray-400">
                       {format(new Date(post.createdAt), "MMM dd, yyyy HH:mm")}
                     </div>
+                    <div className="text-gray-400">No.{post.id}</div>
                   </div>
                   <div className="flex">
                     {post.imageUrl && (
@@ -71,6 +72,7 @@ export function BoardDetail() {
                                 "MMM dd, yyyy HH:mm",
                               )}
                             </div>
+                            <div className="text-gray-400">No.{reply.id}</div>
                           </div>
                           <div className="flex gap-2 p-1">
                             {reply.imageUrl && (

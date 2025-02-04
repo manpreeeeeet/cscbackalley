@@ -91,6 +91,7 @@ export function Board() {
                                 "MMM dd, yyyy HH:mm",
                               )}
                             </div>
+                            <div className="text-gray-400">No.{post.id}</div>
                           </div>
                           <div className="flex">
                             {post.imageUrl && (
@@ -123,6 +124,9 @@ export function Board() {
                                       new Date(reply.createdAt),
                                       "MMM dd, yyyy HH:mm",
                                     )}
+                                  </div>
+                                  <div className="text-gray-400">
+                                    No.{reply.id}
                                   </div>
                                 </div>
                                 <div className="flex gap-2">

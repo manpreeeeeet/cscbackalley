@@ -94,6 +94,7 @@ function App() {
                         "MMM dd, yyyy HH:mm",
                       )}
                     </div>
+                    <div className="text-gray-400">No.{currentPost.id}</div>
                   </div>
                   <div className="flex pt-2">
                     {currentPost!.imageUrl && (
