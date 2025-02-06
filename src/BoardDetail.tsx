@@ -92,7 +92,7 @@ export function BoardDetail() {
                       );
                     })}
                   </div>
-                  <CreateReply room={"projects"} postId={pid!!} />
+                  <CreateReply room={room} postId={pid!!} />
                 </>
               )}
             </div>
